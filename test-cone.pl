@@ -6,19 +6,44 @@ use AutoLoader;
 
 use Inline Python => <<'END';
 import vtk
-from vtk import vtkXOpenGLRenderWindow
+
+class vtkProxy(object):
+  def __init__(self, target):
+    self._target = target
+
+  def __getattr__(self, aname):
+    target = self._target
+    f = getattr(target, aname)
+
+    def wrap_it(*args):
+      u_args_l = []; # final arguments
+      for arg in args:
+        if isinstance(arg, vtkProxy):
+          # unwrap vtkProxy for calling
+	  arg = arg._target
+	u_args_l.append( arg ) 
+      u_args = tuple(u_args_l)
+
+      # proxy the return value
+      return vtkProxy(f(*u_args))
+
+    return wrap_it
+
+my_vtk = vtkProxy(vtk)
 END
 
 sub AUTOLOAD {
-    (my $class = our $AUTOLOAD) =~ s/.*:://;
-    Inline::Python::py_call_function("vtk", $class);
-    #Inline::Python::py_new_object($AUTOLOAD, "vtk", $class);
+    (my $call = our $AUTOLOAD) =~ s/.*:://;
+
+    # check if syntax is correct
+    die "Not a Python identifier: $call" unless( $call =~ /^[^\d\W]\w*\Z/ );
+
+    Inline::Python::py_eval('my_vtk.'. $call . '()', 0);
 }
 
 }
 
 use Inline Python;
-
 
 use strict;
 use warnings;
@@ -28,8 +53,7 @@ method_vtk_manip();
 sub method_vtk_manip {
     my $ren = vtk::vtkRenderer();
     my $renWin = vtk::vtkRenderWindow();
-    #$renWin->AddRenderer($ren);
-    Inline::Python::py_call_method($renWin, 'AddRenderer', $ren);
+    $renWin->AddRenderer($ren);
     my $WIDTH=640;
     my $HEIGHT=480;
     $renWin->SetSize($WIDTH,$HEIGHT);
@@ -60,6 +84,7 @@ sub method_vtk_manip {
     $iren->Start();
 }
 
+
 sub method_everything_in_python {
     start();
 }
@@ -75,10 +100,16 @@ __END__
 __Python__
 
 import vtk
-from vtk import vtkRenderer as vtkRenderer
 
-def test():
-    return vtk;
+debug = 0
+
+if debug:
+  print type(vtk)                        # <type 'module'>
+  print type(vtk.vtkRenderer)            # <type 'vtkclass'>
+  print type(vtk.vtkRenderer())          # <type 'vtkobject'>
+  print getattr(vtk,'vtkRenderer')       # vtkRenderingPython.vtkRenderer
+  print type(getattr(vtk,'vtkRenderer')) # <type 'vtkclass'>
+
 
 def start():
     ren = vtk.vtkRenderer()
