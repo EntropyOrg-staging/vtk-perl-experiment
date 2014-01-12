@@ -38,7 +38,7 @@ sub AUTOLOAD {
     # check if syntax is correct
     die "Not a Python identifier: $call" unless( $call =~ /^[^\d\W]\w*\Z/ );
 
-    Inline::Python::py_eval('my_vtk.'. $call . '()', 0);
+    Inline::Python::py_eval("my_vtk.$call()", 0);
 }
 
 }
