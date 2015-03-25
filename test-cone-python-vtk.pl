@@ -69,7 +69,7 @@ sub method_vtk_manip {
 
     # mapper
     my $coneMapper = vtk::vtkPolyDataMapper();
-    $coneMapper->SetInput($cone->GetOutput());
+    $coneMapper->SetInputConnection($cone->GetOutputPort());
 
     # actor
     my $coneActor = vtk::vtkActor();
@@ -130,7 +130,7 @@ def start():
 
     # mapper
     coneMapper = vtk.vtkPolyDataMapper()
-    coneMapper.SetInput(cone.GetOutput())
+    coneMapper.SetInputConnection(cone.GetOutputPort())
 
     # actor
     coneActor = vtk.vtkActor()
