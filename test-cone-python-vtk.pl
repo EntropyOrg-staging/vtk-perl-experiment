@@ -104,11 +104,11 @@ import vtk
 debug = 0
 
 if debug:
-  print type(vtk)                        # <type 'module'>
-  print type(vtk.vtkRenderer)            # <type 'vtkclass'>
-  print type(vtk.vtkRenderer())          # <type 'vtkobject'>
-  print getattr(vtk,'vtkRenderer')       # vtkRenderingPython.vtkRenderer
-  print type(getattr(vtk,'vtkRenderer')) # <type 'vtkclass'>
+  print(type(vtk))                        # <type 'module'>
+  print(type(vtk.vtkRenderer))            # <type 'vtkclass'>
+  print(type(vtk.vtkRenderer()))          # <type 'vtkobject'>
+  print(getattr(vtk,'vtkRenderer'))       # vtkRenderingPython.vtkRenderer
+  print(type(getattr(vtk,'vtkRenderer'))) # <type 'vtkclass'>
 
 
 def start():
