@@ -20,8 +20,8 @@ class vtkProxy(object):
       for arg in args:
         if isinstance(arg, vtkProxy):
           # unwrap vtkProxy for calling
-	  arg = arg._target
-	u_args_l.append( arg ) 
+          arg = arg._target
+        u_args_l.append( arg )
       u_args = tuple(u_args_l)
 
       # proxy the return value
