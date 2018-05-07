@@ -1,0 +1,14 @@
+aptitude install python3-vtk7
+install with debug print
+	export INLINE_PYTHON_EXECUTABLE=$(which python3); cpanm --verbose -f Inline::Python
+	cpanm --look Inline::Python
+	perl Makefile.PL
+	make
+	make install
+
+import vtk
+	use Inline Python;
+	use Inline::Python;
+	Inline::Python::py_eval('import vtk');
+
+vim: ft=vo_base
